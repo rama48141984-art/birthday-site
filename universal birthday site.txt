@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🧸🎂</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe5ec, #ffc2d1, #f9bec7);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- Global App Card Structure --- */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(251, 111, 146, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            z-index: 10;
+            border: 4px solid #ffb3c6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .hidden { display: none !important; }
+
+        h1 { color: #ff4d6d; margin-bottom: 1.5rem; font-size: 2.2rem; }
+        p { color: #4a4a4a; font-size: 1.15rem; line-height: 1.6; margin-bottom: 2rem; }
+
+        /* --- Buttons --- */
+        .btn-container { display: flex; justify-content: center; gap: 1.5rem; width: 100%; }
+        .btn {
+            padding: 0.9rem 2.2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(255, 77, 109, 0.2);
+        }
+        .btn-primary { background-color: #ff4d6d; color: white; }
+        .btn-primary:hover { background-color: #ff758f; transform: scale(1.05); }
+        .btn-secondary { background-color: #fff0f3; color: #ff758f; border: 2px solid #ffb3c6; }
+        .btn-secondary:hover { transform: scale(0.98); }
+
+        /* --- Page 1 Items --- */
+        .welcome-icon { font-size: 5rem; animation: float 3s ease-in-out infinite; }
+
+        /* --- Page 3: Angry/Biting Bears Animation --- */
+        .bear-fight-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            height: 120px;
+            width: 200px;
+        }
+        .bear-angy, .bear-victim { font-size: 4.5rem; position: absolute; }
+        .bear-victim { left: 20px; }
+        .bear-angy {
+            right: 20px;
+            animation: biteAttack 1.5s infinite ease-in-out;
+        }
+        @keyframes biteAttack {
+            0%, 100% { transform: translateX(0) scaleX(-1); }
+            50% { transform: translateX(-40px) scaleX(-1) rotate(-10deg); }
+        }
+
+        /* --- Page 4: Cake & Candle Mechanics --- */
+        .cake-container { position: relative; width: 150px; height: 150px; margin-bottom: 2rem; cursor: pointer;}
+        .cake { font-size: 6rem; line-height: 1; }
+        .candle-flame {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            animation: flicker 0.5s infinite alternate;
+            transition: opacity 0.5s ease;
+        }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            100% { transform: translateX(-48%) scale(1.1); opacity: 1; }
+        }
+        .mic-indicator {
+            font-size: 0.9rem;
+            color: #7a7a7a;
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Float helper keyframe */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="page1">
+        <span class="welcome-icon">✨🌸💝🌸✨</span>
+        <br>
+        <h1>Welcome, Special Someone!</h1>
+        <p>Today is a beautiful day because it marks the celebration of an incredible soul. Take a deep breath, leave all your worries aside, and come step inside...</p>
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="goToPage(2)">Enter ✨</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="page2">
+        <span class="welcome-icon" style="font-size: 5rem;">🧸🎁</span>
+        <h1>A Little Surprise...</h1>
+        <p>I have something put together just for you! <br><b>Do you want to see your birthday present?</b></p>
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="triggerYesCelebration()">Yes, please! 😍</button>
+            <button class="btn btn-secondary" onclick="goToPage(3)">No 😢</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="page3">
+        <div class="bear-fight-box">
+            <div class="bear-victim">😭</div>
+            <div class="bear-angy">🐻💢</div>
+        </div>
+        <h1 style="color: #c9184a;">Hey! Why did you press NO?!</h1>
+        <p>Teddy is very upset with your decision! Bad choices have consequences. You are supposed to see your present! Go back and try again! 🧸💥</p>
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="goToPage(2)">⬅️ Go Back & Say Yes!</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="page4">
+        <h1 id="celebrationHeader">Make a Wish! 🎂</h1>
+        
+        <div class="cake-container" id="cakeWrapper" onclick="blowCandleManual()">
+            <div class="candle-flame" id="flame">🔥</div>
+            <div class="cake">🎂</div>
+        </div>
+        <p id="cakeInstruction" class="mic-indicator">Blow into your microphone or tap the cake to blow out the candle!</p>
+        
+        <div id="lovelyMessage" class="hidden">
+            <p style="font-weight: bold; color: #ff4d6d; font-size: 1.3rem; margin-bottom: 1rem;">✨ Happy Birthday! ✨</p>
+            <p style="color: #c9184a; font-weight: 500;">
+                May your day be filled with endless smiles, warm teddy bear hugs, and wonderful dreams come true. You are deeply cherished, incredibly loved, and deserve the absolute best today and always! Happy Candle Blowing! 💖🎉
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation Controller
+        function goToPage(pageNumber) {
+            // Hide all pages
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('page3').classList.add('hidden');
+            document.getElementById('page4').classList.add('hidden');
+            
+            // Show targeted page
+            document.getElementById('page' + pageNumber).classList.remove('hidden');
+        }
+
+        // Setup Page 4 and Start Retro Music Synth
+        function triggerYesCelebration() {
+            goToPage(4);
+            startBirthdayTune();
+            initMicrophoneDetection();
+        }
+
+        // Web Audio API Synth to play Happy Birthday Tune
+        function startBirthdayTune() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                
+                // Happy birthday note sequence: [Freq, duration(ms)]
+                const notes = [
+                    [261.63, 400], [261.63, 200], [293.66, 600], [261.63, 600], [349.23, 600], [329.63, 1000],
+                    [261.63, 400], [261.63, 200], [293.66, 600], [261.63, 600], [392.00, 600], [349.23, 1000]
+                ];
+
+                let timeOffset = 0;
+                notes.forEach(note => {
+                    setTimeout(() => {
+                        let osc = ctx.createOscillator();
+                        let gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(note[0], ctx.currentTime);
+                        
+                        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (note[1]/1000));
+                        
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + (note[1]/1000));
+                    }, timeOffset);
+                    timeOffset += note[1] + 50; 
+                });
+            } catch (e) {
+                console.log("Audio play blocked/unsupported until user gestures interaction.");
+            }
+        }
+
+        // Action: Blowing candle manually on click
+        function blowCandleManual() {
+            extinguishCandle();
+        }
+
+        // Audio Input: Microphone listener to detect blowing sound (air velocity)
+        function initMicrophoneDetection() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = audioContext.createAnalyser();
+                    const microphone = audioContext.createMediaStreamSource(stream);
+                    const javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+                    analyser.smoothingTimeConstant = 0.8;
+                    analyser.fftSize = 1024;
+
+                    microphone.connect(analyser);
+                    analyser.connect(javascriptNode);
+                    javascriptNode.connect(audioContext.destination);
+
+                    javascriptNode.onaudioprocess = function() {
+                        const array = new Uint8Array(analyser.frequencyBinCount);
+                        analyser.getByteFrequencyData(array);
+                        let values = 0;
+
+                        const length = array.length;
+                        for (let i = 0; i < length; i++) {
+                            values += array[i];
+                        }
+                        const average = values / length;
+
+                        // Threshold value for detecting a breath/blow
+                        if (average > 45) { 
+                            extinguishCandle();
+                            // Stop mic streams to preserve device icons
+                            stream.getTracks().forEach(track => track.stop());
+                            javascriptNode.onaudioprocess = null;
+                        }
+                    }
+                })
+                .catch(function(err) {
+                    console.log("Microphone access declined or unavailable. Falling back to tap control.");
+                });
+            }
+        }
+
+        // Action when candle goes out
+        function extinguishCandle() {
+            const flame = document.getElementById('flame');
+            if(flame && !flame.classList.contains('hidden')) {
+                flame.style.opacity = '0';
+                setTimeout(() => flame.remove(), 500);
+                
+                // Fire beautiful confetti
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                
+                // Unveil beautiful message and change layouts
+                document.getElementById('celebrationHeader').innerText = "Happy Birthday! 🥳✨";
+                document.getElementById('cakeInstruction').classList.add('hidden');
+                document.getElementById('lovelyMessage').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
